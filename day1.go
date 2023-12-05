@@ -32,12 +32,10 @@ func Trebuchet_Part2(input string) int {
 		new_line := line
 		min_len, min_index := 0, len(line)
 		for wrd, num := range numbers {
-			i := find(line, wrd)
-			j := find(line, fmt.Sprintf("%d", num))
-			if i < min_index && i > -1 {
+			if i := find(line, wrd); i < min_index && i > -1 {
 				min_index, min_len = i, len(wrd)
 			}
-			if j < min_index && j > -1 {
+			if j := find(line, fmt.Sprintf("%d", num)); j < min_index && j > -1 {
 				min_index, min_len = j, 1
 			}
 		}
@@ -46,12 +44,10 @@ func Trebuchet_Part2(input string) int {
 		}
 		max_len, max_index := 0, -1
 		for wrd, num := range numbers {
-			i := rfind(new_line, wrd)
-			j := rfind(new_line, fmt.Sprintf("%d", num))
-			if i > max_index && i > -1 {
+			if i := rfind(new_line, wrd); i > max_index && i > -1 {
 				max_index, max_len = i, len(wrd)
 			}
-			if j > max_index && j > -1 {
+			if j := rfind(new_line, fmt.Sprintf("%d", num)); j > max_index && j > -1 {
 				max_index, max_len = j, 1
 			}
 		}
