@@ -17,7 +17,7 @@ func find(haystack string, needle string) int {
 }
 
 func rfind(haystack string, needle string) int {
-	for i := len(haystack) - len(needle); i > 0; i-- {
+	for i := len(haystack) - len(needle); i >= 0; i-- {
 		if haystack[i:i+len(needle)] == needle {
 			return i
 		}
@@ -35,36 +35,28 @@ func Trebuchet_Part2(input string) int {
 			i := find(line, wrd)
 			j := find(line, fmt.Sprintf("%d", num))
 			if i < min_index && i > -1 {
-				min_index = i
-				min_len = len(wrd)
+				min_index, min_len = i, len(wrd)
 			}
 			if j < min_index && j > -1 {
-				min_index = j
-				min_len = 1
+				min_index, min_len = j, 1
 			}
 		}
-		if min_index > -1 {
-			if _, ok := numbers[line[min_index:min_index+min_len]]; ok {
-				new_line = fmt.Sprintf("%v%v%v", line[:min_index], numbers[line[min_index:min_index+min_len]], line[min_index+min_len:])
-			}
+		if _, ok := numbers[line[min_index:min_index+min_len]]; ok {
+			new_line = fmt.Sprintf("%v%v%v", line[:min_index], numbers[line[min_index:min_index+min_len]], line[min_index+min_len:])
 		}
 		max_len, max_index := 0, -1
 		for wrd, num := range numbers {
 			i := rfind(new_line, wrd)
 			j := rfind(new_line, fmt.Sprintf("%d", num))
 			if i > max_index && i > -1 {
-				max_index = i
-				max_len = len(wrd)
+				max_index, max_len = i, len(wrd)
 			}
 			if j > max_index && j > -1 {
-				max_index = j
-				max_len = 1
+				max_index, max_len = j, 1
 			}
 		}
-		if max_index > -1 {
-			if _, ok := numbers[new_line[max_index:max_index+max_len]]; ok {
-				new_line = fmt.Sprintf("%v%v%v", new_line[:max_index], numbers[new_line[max_index:max_index+max_len]], new_line[max_index+max_len:])
-			}
+		if _, ok := numbers[new_line[max_index:max_index+max_len]]; ok {
+			new_line = fmt.Sprintf("%v%v%v", new_line[:max_index], numbers[new_line[max_index:max_index+max_len]], new_line[max_index+max_len:])
 		}
 		new_input += fmt.Sprintf("%v\n", new_line)
 	}
