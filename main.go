@@ -16,11 +16,18 @@ func run_day(day int, input string) {
 		fmt.Printf("Part 1 Answer: %d\n", sum)
 		sum = code.Trebuchet_Part2(input)
 		fmt.Printf("Part 2 Answer: %d\n", sum)
+	case 2:
+		fmt.Println("Day 2: Cube Conundrum")
+		sum, err := code.CubeConundrum_Part1(input, 12, 13, 14)
+		if err != nil {
+			fmt.Printf("error: %d\n", err)
+		}
+		fmt.Printf("Part 1 Answer: %d\n", sum)
 	}
 }
 
 func main() {
-	days := []int{1}
+	days := []int{2}
 	for _, day := range days {
 		scanner := bufio.NewScanner(os.Stdin)
 		fmt.Print("Enter input: ")
