@@ -1,9 +1,7 @@
-package main
+package code
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"strings"
 )
 
@@ -82,17 +80,4 @@ func Trebuchet_Part1(input string) int {
 		sum += num
 	}
 	return sum
-}
-
-func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print("Enter input: ")
-	input := ""
-	for scanner.Scan() {
-		input += fmt.Sprintf("%s\n", strings.TrimSpace(scanner.Text()))
-	}
-	input = input[:len(input)-1]
-	sum := Trebuchet_Part2(input)
-	fmt.Println("Day 1: Trebuchet!?")
-	fmt.Println(fmt.Sprintf("Answer: %d", sum))
 }
