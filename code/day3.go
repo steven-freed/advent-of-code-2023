@@ -84,7 +84,8 @@ func GearRatios_Part2(input string) (int, error) {
 		startCol := -1
 		gearsForDigit := make(map[coord]bool)
 		for c, _ := range schemGraph[r] {
-			if isDigit(schemGraph[r][c]) {
+			digit := isDigit(schemGraph[r][c])
+			if digit {
 				if startCol < 0 {
 					startCol = c
 					gearsForDigit = make(map[coord]bool)
@@ -93,9 +94,11 @@ func GearRatios_Part2(input string) (int, error) {
 				for k, v := range gears {
 					gearsForDigit[k] = v
 				}
-				continue
 			}
-			if startCol > -1 {
+			if startCol > -1 && (!digit || c == rowCount-1) {
+				if (c == rowCount-1) && digit {
+					c = rowCount
+				}
 				partNum, err := strconv.Atoi(string(schemGraph[r][startCol:c]))
 				if err != nil {
 					return 0, errors.New("unable to convert part number to int")
@@ -112,22 +115,8 @@ func GearRatios_Part2(input string) (int, error) {
 					}
 				}
 			}
-			startCol = -1
-		}
-		if startCol > -1 {
-			partNum, err := strconv.Atoi(string(schemGraph[r][startCol:]))
-			if err != nil {
-				return 0, errors.New("unable to convert part number to int")
-			}
-			for k, _ := range gearsForDigit {
-				gearRatioCopy, ok := gearRatios[k]
-				if !ok {
-					gearRatios[k] = gearMeta{ratio: partNum, adjPartNums: 1}
-				} else {
-					gearRatioCopy.ratio *= partNum
-					gearRatioCopy.adjPartNums += 1
-					gearRatios[k] = gearRatioCopy
-				}
+			if !digit {
+				startCol = -1
 			}
 		}
 	}
@@ -150,32 +139,29 @@ func GearRatios_Part1(input string) (int, error) {
 		startCol := -1
 		validPartNum := false
 		for c, _ := range schemGraph[r] {
-			if isDigit(schemGraph[r][c]) {
+			digit := isDigit(schemGraph[r][c])
+			if digit {
 				if startCol < 0 {
 					startCol = c
 				}
 				if !validPartNum && isValidPartNumber(r, c, schemGraph, rowCount, colCount) {
 					validPartNum = true
 				}
-				continue
 			}
-			if startCol > -1 && validPartNum {
+			if (startCol > -1 && validPartNum) && (!digit || c == rowCount-1) {
+				if (c == rowCount-1) && digit {
+					c = rowCount
+				}
 				partNum, err := strconv.Atoi(string(schemGraph[r][startCol:c]))
 				if err != nil {
 					return 0, errors.New("unable to convert part number to int")
 				}
 				partNumSum += partNum
 			}
-			validPartNum = false
-			startCol = -1
-		}
-		// captures edge case where last character(s) are digit(s)
-		if startCol > -1 && validPartNum {
-			partNum, err := strconv.Atoi(string(schemGraph[r][startCol:]))
-			if err != nil {
-				return 0, errors.New("unable to convert part number to int")
+			if !digit {
+				validPartNum = false
+				startCol = -1
 			}
-			partNumSum += partNum
 		}
 	}
 	return partNumSum, nil
