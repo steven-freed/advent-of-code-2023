@@ -28,11 +28,18 @@ func run_day(day int, input string) {
 			fmt.Printf("error: %d\n", err)
 		}
 		fmt.Printf("Part 2 Answer: %d\n", sum)
+	case 3:
+		fmt.Println("Day 3: Gear Ratios")
+		sum, err := code.GearRatios_Part1(input)
+		if err != nil {
+			fmt.Printf("error: %d\n", err)
+		}
+		fmt.Printf("Part 1 Answer: %d\n", sum)
 	}
 }
 
 func main() {
-	days := []int{2}
+	days := []int{3}
 	for _, day := range days {
 		scanner := bufio.NewScanner(os.Stdin)
 		fmt.Print("Enter input: ")
