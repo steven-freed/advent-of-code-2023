@@ -35,6 +35,11 @@ func run_day(day int, input string) {
 			fmt.Printf("error: %d\n", err)
 		}
 		fmt.Printf("Part 1 Answer: %d\n", sum)
+		sum, err = code.GearRatios_Part2(input)
+		if err != nil {
+			fmt.Printf("error: %d\n", err)
+		}
+		fmt.Printf("Part 2 Answer: %d\n", sum)
 	}
 }
 
