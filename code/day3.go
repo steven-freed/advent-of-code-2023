@@ -1,7 +1,9 @@
 package code
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -18,6 +20,26 @@ func isDigit(input rune) bool {
 	return input >= 48 && input <= 57
 }
 
+func isValidPartNumber(r int, c int, graph [][]rune, rows int, cols int) bool {
+	checks := [][]int{
+		{0, 1},
+		{1, 0},
+		{-1, 0},
+		{0, -1},
+		{1, 1},
+		{-1, 1},
+		{1, -1},
+		{-1, -1},
+	}
+	for _, el := range checks {
+		i, j := r+el[0], c+el[1]
+		if i < rows && i > -1 && j < cols && j > -1 && (graph[i][j] < 48 || graph[i][j] > 57) && graph[i][j] != 46 {
+			return true
+		}
+	}
+	return false
+}
+
 func GearRatios_Part1(input string) (int, error) {
 	// convert input to graph
 	rows := strings.Split(input, "\n")
@@ -27,53 +49,46 @@ func GearRatios_Part1(input string) (int, error) {
 		colCount = len(rows[0])
 	}
 	schemGraph := make([][]rune, rowCount)
-	markedGraph := make([][]rune, rowCount)
 	for i, row := range rows {
 		schemGraphRow := make([]rune, colCount)
-		markedGraphRow := make([]rune, colCount)
 		for j, col := range row {
 			schemGraphRow[j] = col
-			markedGraphRow[j] = col
 		}
 		schemGraph[i] = schemGraphRow
-		markedGraph[i] = markedGraphRow
 	}
-	// create marked rows graph
-	// each partnumber is transformed so that the first (left most) digit is the len of the number
-	// and each subsequent digit from left to right is the offset from the first (left most) digit
-	for i, _ := range schemGraph {
-		partNumLen := 0
+	// sum valid part numbers
+	partNumSum := 0
+	for r, _ := range schemGraph {
 		startCol := -1
-		for j, _ := range schemGraph[i] {
-			if isDigit(schemGraph[i][j]) {
+		validPartNum := false
+		for c, _ := range schemGraph[r] {
+			if isDigit(schemGraph[r][c]) {
 				if startCol < 0 {
-					startCol = j
+					startCol = c
 				}
-				markedGraph[i][j] = rune(j - startCol + 48)
-				partNumLen += 1
+				if !validPartNum && isValidPartNumber(r, c, schemGraph, rowCount, colCount) {
+					validPartNum = true
+				}
 				continue
 			}
-			if startCol > -1 {
-				markedGraph[i][startCol] = rune(partNumLen + 48)
-				markedGraph[i][j-1] = rune(j - 1 - startCol + 48)
+			if startCol > -1 && validPartNum {
+				partNum, err := strconv.Atoi(string(schemGraph[r][startCol:c]))
+				if err != nil {
+					return 0, errors.New("unable to convert part number to int")
+				}
+				partNumSum += partNum
 			}
-			partNumLen = 0
+			validPartNum = false
 			startCol = -1
 		}
+		// captures edge case where last character(s) are digit(s)
+		if startCol > -1 && validPartNum {
+			partNum, err := strconv.Atoi(string(schemGraph[r][startCol:]))
+			if err != nil {
+				return 0, errors.New("unable to convert part number to int")
+			}
+			partNumSum += partNum
+		}
 	}
-	prettyPrint(markedGraph)
-	// sum part numbers
-	// for i, _ := range schemGraph {
-	// 	for j, _ := range schemGraph[i] {
-	// 		if schemGraph[i][j] >= 48 && schemGraph[i][j] <= 57 {
-	// 			if (i-1 > -1 && schemGraph[i-1][j] < 48 && schemGraph[i-1][j] > 57 && schemGraph[i-1][j] != '.') ||
-	// 				(i+1 < rowCount && schemGraph[i+1][j] < 48 && schemGraph[i+1][j] > 57 && schemGraph[i+1][j] != '.') ||
-	// 				(j-1 > -1 && schemGraph[i][j-1] < 48 && schemGraph[i][j-1] > 57 && schemGraph[i][j-1] != '.') ||
-	// 				(j+1 < colCount && schemGraph[i][j+1] < 48 && schemGraph[i][j+1] > 57 && schemGraph[i][j+1] != '.') {
-
-	// 			}
-	// 		}
-	// 	}
-	// }
-	return 0, nil
+	return partNumSum, nil
 }
