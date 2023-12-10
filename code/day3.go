@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-func isDigit(input rune) bool {
-	return input >= 48 && input <= 57
-}
-
 func schematicToGraph(schematic string) [][]rune {
 	rows := strings.Split(schematic, "\n")
 	rowCount := len(rows)

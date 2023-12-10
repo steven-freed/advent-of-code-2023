@@ -5,24 +5,6 @@ import (
 	"strings"
 )
 
-func find(haystack string, needle string) int {
-	for i := 0; i < len(haystack)-len(needle)+1; i++ {
-		if haystack[i:i+len(needle)] == needle {
-			return i
-		}
-	}
-	return -1
-}
-
-func rfind(haystack string, needle string) int {
-	for i := len(haystack) - len(needle); i >= 0; i-- {
-		if haystack[i:i+len(needle)] == needle {
-			return i
-		}
-	}
-	return -1
-}
-
 func Trebuchet_Part2(input string) int {
 	numbers := map[string]int{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
 	new_input := ""

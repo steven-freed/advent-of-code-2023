@@ -6,11 +6,6 @@ import (
 	"strings"
 )
 
-const (
-	GAME  = "Game"
-	COLON = ":"
-)
-
 func CubeConundrum_Part2(input string) (int, error) {
 	cubePowerSum := 0
 	for _, line := range strings.Split(input, "\n") {
