@@ -5,10 +5,6 @@ const (
 	COLON = ":"
 )
 
-func removeTrailingNewLine(input string) string {
-	return input[:len(input)-1]
-}
-
 func isDigit(input rune) bool {
 	return input >= 48 && input <= 57
 }

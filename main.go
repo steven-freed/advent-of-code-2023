@@ -52,11 +52,23 @@ func run_day(day int, input string) {
 			fmt.Printf("error: %d\n", err)
 		}
 		fmt.Printf("Part 2 Answer: %d\n", sum)
+	case 5:
+		fmt.Println("Day 5: If You Give A Seed A Fertilizer")
+		sum, err := code.SeedFertilizer_Part1(input)
+		if err != nil {
+			fmt.Printf("error: %d\n", err)
+		}
+		fmt.Printf("Part 1 Answer: %d\n", sum)
+		// sum, err = code.SeedFertilizer_Part2(input)
+		// if err != nil {
+		// 	fmt.Printf("error: %d\n", err)
+		// }
+		// fmt.Printf("Part 2 Answer: %d\n", sum)
 	}
 }
 
 func main() {
-	days := []int{4}
+	days := []int{5}
 	for _, day := range days {
 		scanner := bufio.NewScanner(os.Stdin)
 		fmt.Print("Enter input: ")
