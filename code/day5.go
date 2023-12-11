@@ -61,7 +61,7 @@ func almanacToAlmanMaps(input string) (map[string]AlmanMap, error) {
 	return maps, nil
 }
 
-func SeedFertilizer_Part1(input string) (int, error) {
+func extractAlmanacSeeds(input string) ([]int, error) {
 	seeds := make([]int, 0)
 	for _, line := range strings.Split(input, "\n") {
 		if len(line) > 0 && !strings.Contains(line, "map") {
@@ -70,17 +70,17 @@ func SeedFertilizer_Part1(input string) (int, error) {
 			for _, s := range sliceaSeeds {
 				s, err := strconv.Atoi(s)
 				if err != nil {
-					return 0, errors.New("unable to parse seeds")
+					return nil, errors.New("unable to parse seeds")
 				}
 				seeds = append(seeds, s)
 			}
 			break
 		}
 	}
-	almanMaps, err := almanacToAlmanMaps(input)
-	if err != nil {
-		return 0, err
-	}
+	return seeds, nil
+}
+
+func minLocation(seeds []int, almanMaps map[string]AlmanMap) int {
 	key := "seed"
 	nextSrc := 0
 	minLocation := math.MaxFloat64
@@ -95,5 +95,44 @@ func SeedFertilizer_Part1(input string) (int, error) {
 		minLocation = math.Min(minLocation, float64(nextSrc))
 		key = "seed"
 	}
-	return int(minLocation), nil
+	return int(minLocation)
+}
+
+func seedsToSeedRange(seeds []int) []int {
+	seedRange := make([]int, 0)
+	for i := range seeds {
+		if i%2 != 0 {
+			startSeed := seeds[i-1]
+			rangeSeed := seeds[i]
+			for j := startSeed; j < (startSeed + rangeSeed); j++ {
+				seedRange = append(seedRange, j)
+			}
+		}
+	}
+	return seedRange
+}
+
+func SeedFertilizer_Part2(input string) (int, error) {
+	seeds, err := extractAlmanacSeeds(input)
+	if err != nil {
+		return 0, err
+	}
+	seeds = seedsToSeedRange(seeds)
+	almanMaps, err := almanacToAlmanMaps(input)
+	if err != nil {
+		return 0, err
+	}
+	return minLocation(seeds, almanMaps), nil
+}
+
+func SeedFertilizer_Part1(input string) (int, error) {
+	seeds, err := extractAlmanacSeeds(input)
+	if err != nil {
+		return 0, err
+	}
+	almanMaps, err := almanacToAlmanMaps(input)
+	if err != nil {
+		return 0, err
+	}
+	return minLocation(seeds, almanMaps), nil
 }
