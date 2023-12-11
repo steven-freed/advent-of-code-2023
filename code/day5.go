@@ -2,16 +2,27 @@ package code
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
 )
 
 type AlmanMap struct {
-	source    string
-	dest      string
-	srcToDest map[int]int
+	source      string
+	dest        string
+	destCol     []int
+	srcCol      []int
+	rangeLenCol []int
+}
+
+func (m AlmanMap) srcToDest(src int) int {
+	for row, rangeVal := range m.rangeLenCol {
+		srcWithinRange := src >= m.srcCol[row] && src <= (m.srcCol[row]+rangeVal-1)
+		if srcWithinRange {
+			return m.destCol[row] + (src - m.srcCol[row])
+		}
+	}
+	return src
 }
 
 func almanacToAlmanMaps(input string) (map[string]AlmanMap, error) {
@@ -22,9 +33,11 @@ func almanacToAlmanMaps(input string) (map[string]AlmanMap, error) {
 			// generate almanac maps
 			mapName := strings.Split(lines[i][:strings.Index(lines[i], " ")], "-")
 			m := &AlmanMap{
-				source:    mapName[0],
-				dest:      mapName[2],
-				srcToDest: make(map[int]int),
+				source:      mapName[0],
+				dest:        mapName[2],
+				destCol:     make([]int, 0),
+				srcCol:      make([]int, 0),
+				rangeLenCol: make([]int, 0),
 			}
 			i++ // skip over map name line
 			// parse map table
@@ -36,17 +49,14 @@ func almanacToAlmanMaps(input string) (map[string]AlmanMap, error) {
 				if derr != nil || serr != nil || rerr != nil {
 					return nil, errors.New("unable to parse map")
 				}
-				for j := 0; j < rangeLen; j++ {
-					srcNum := src + j
-					destNum := dest + j
-					m.srcToDest[srcNum] = destNum
-				}
+				m.destCol = append(m.destCol, dest)
+				m.srcCol = append(m.srcCol, src)
+				m.rangeLenCol = append(m.rangeLenCol, rangeLen)
 				i++ // skip over blank line after map table
 			}
 			// add src map
 			maps[mapName[0]] = *m
 		}
-		fmt.Println("parsed line:", i+1, "of", len(lines))
 	}
 	return maps, nil
 }
@@ -73,19 +83,17 @@ func SeedFertilizer_Part1(input string) (int, error) {
 	}
 	key := "seed"
 	nextSrc := 0
-	minLocation := math.MaxInt64
+	minLocation := math.MaxFloat64
 	for _, seed := range seeds {
 		if key == "seed" {
 			nextSrc = seed
 		}
 		for key != "location" {
-			if _, ok := almanMaps[key].srcToDest[nextSrc]; ok {
-				nextSrc = almanMaps[key].srcToDest[nextSrc]
-			}
+			nextSrc = almanMaps[key].srcToDest(nextSrc)
 			key = almanMaps[key].dest
 		}
-		minLocation = int(math.Min(float64(minLocation), float64(nextSrc)))
+		minLocation = math.Min(minLocation, float64(nextSrc))
 		key = "seed"
 	}
-	return minLocation, nil
+	return int(minLocation), nil
 }
