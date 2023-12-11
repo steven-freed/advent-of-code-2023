@@ -4,6 +4,7 @@ import (
 	"advent-of-code-2023/code"
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 )
@@ -70,8 +71,12 @@ func run_day(day int, input string) {
 func main() {
 	days := []int{5}
 	for _, day := range days {
-		scanner := bufio.NewScanner(os.Stdin)
-		fmt.Print("Enter input: ")
+		file, err := os.Open(fmt.Sprintf("day%v_input.txt", day))
+		if err != nil {
+			log.Fatal("unable to read input file")
+		}
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
 		input := ""
 		for scanner.Scan() {
 			input += fmt.Sprintf("%s\n", strings.TrimSpace(scanner.Text()))
